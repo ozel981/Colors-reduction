@@ -15,7 +15,7 @@ namespace Colors_reduction.OctreeTree
 
         public Octree()
         {
-            root = new OctreeNode();
+            root = new OctreeNode(0);
             ColorsCount = 0;
         }
 
@@ -31,25 +31,42 @@ namespace Colors_reduction.OctreeTree
 
         public void ReduceColorsCount(int limit)
         {
+            HashSet<Color> colorssss = new HashSet<Color>();
             while (ColorsCount > limit)
             {
                 int CountOfReducedColors = 0;
                 IOctreeNode ReducedNode;
                 IOctreeNode ReducedNodeParent;
                 (ReducedNodeParent, ReducedNode) = GetReducedNode(root);
+                if(ReducedNode.Index != 7)
+                {
+
+                }
                 foreach (IOctreeNode node in ReducedNode.GetNodes())
                 {
-                    if (node != null) CountOfReducedColors++;
+                    if (node != null)
+                    {
+                        CountOfReducedColors++;
+                        if(colorssss.Contains(node.GetAvgColor()))
+                        {
+
+                        }
+                        colorssss.Add(node.GetAvgColor());
+                    }
+                }
+                if(CountOfReducedColors > 1)
+                {
+
                 }
                 if (ReducedNodeParent == null)
                 {
-                    root = new OctreeLeaf(ReducedNode.GetAvgColor(), ReducedNode.GetColorCount());
+                    root = new OctreeLeaf(ReducedNode.GetAvgColor(), ReducedNode.GetColorCount(), 0);
                 }
                 else for (int i = 0; i < 8; i++)
                 {
                     if (ReducedNodeParent.GetNodes()[i] == ReducedNode)
                     {
-                        ReducedNodeParent.GetNodes()[i] = new OctreeLeaf(ReducedNode.GetAvgColor(), ReducedNode.GetColorCount());
+                        ReducedNodeParent.GetNodes()[i] = new OctreeLeaf(ReducedNode.GetAvgColor(), ReducedNode.GetColorCount(), ReducedNode.Index);
                     }
                 }
                 ColorsCount -= CountOfReducedColors;

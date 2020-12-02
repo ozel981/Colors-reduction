@@ -9,6 +9,7 @@ namespace Colors_reduction.OctreeTree
 {
     interface IOctreeNode
     {
+        int Index { get; set; }
         IOctreeNode[] GetNodes();
         int AddColor(Color color, int index);
         Color GetColor(Color color, int index);
@@ -19,8 +20,10 @@ namespace Colors_reduction.OctreeTree
     class OctreeNode : IOctreeNode
     {
         private IOctreeNode[] nodes;
-        public OctreeNode()
+        public int Index { get; set; }
+        public OctreeNode(int index)
         {
+            this.Index = index;
             nodes = new IOctreeNode[8];
         }
         private int ColorImportance(int color, int index)
@@ -36,11 +39,11 @@ namespace Colors_reduction.OctreeTree
             {
                 if(index == 7)
                 {
-                    nodes[nodeId] = new OctreeLeaf(color);
+                    nodes[nodeId] = new OctreeLeaf(color, 1, 8);
                 }
                 else
                 {
-                    nodes[nodeId] = new OctreeNode();
+                    nodes[nodeId] = new OctreeNode(index + 1);
                     nodes[nodeId].AddColor(color, index + 1);
                 }
                 return 1;
@@ -106,9 +109,11 @@ namespace Colors_reduction.OctreeTree
     {
         private Color color;
         private int Count;
+        public int Index { get; set; }
 
-        public OctreeLeaf(Color color, int count = 1)
+        public OctreeLeaf(Color color, int count = 1, int index = 1)
         {
+            this.Index = index;
             this.color = color;
             Count = 1;
         }
@@ -125,7 +130,7 @@ namespace Colors_reduction.OctreeTree
 
         public Color GetColor(Color color, int index)
         {
-            return color;
+            return this.color;
         }
 
         public int GetColorCount()
