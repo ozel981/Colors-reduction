@@ -24,7 +24,7 @@ namespace Colors_reduction
             InitializeComponent();
             imagePath = Application.StartupPath;
             imagePath = Path.Combine(imagePath.Substring(0, imagePath.Length - 9), @"Images");
-            imagePath += "/lena3.jpg";
+            imagePath += "/lena.jpg";
             pictureBox.Image = new Bitmap(new Bitmap(imagePath), pictureBox.Width, pictureBox.Height);
             pictureBoxAfter.Image = new Bitmap(pictureBoxAfter.Width, pictureBoxAfter.Height);
             pictureBoxAlong.Image = new Bitmap(pictureBoxAlong.Width, pictureBoxAlong.Height);
