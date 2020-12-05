@@ -8,32 +8,36 @@ using System.Threading.Tasks;
 
 namespace Colors_reduction
 {
-    class ReducedColorsPicture
+    class ReducedColorsBitmapFactory
     {
-        private Bitmap OrginalBitmap;
+        private Bitmap patternBitmap;
         private Octree octree;
-        private Size BitmapSize;
+        private Size lastCalculatedBitmapSize;
         private bool ReduceColorsAlongCreatingOctree;
-        public ReducedColorsPicture(Bitmap bitmap, bool reduceColorsAlongCreatingOctree = false)
+        public ReducedColorsBitmapFactory(Bitmap patternBitmap, bool reduceColorsAlongCreatingBitmap = false)
         {
             octree = null;
-            OrginalBitmap = bitmap;
-            BitmapSize = OrginalBitmap.Size;
-            ReduceColorsAlongCreatingOctree = reduceColorsAlongCreatingOctree;
+            this.patternBitmap = patternBitmap;
+            lastCalculatedBitmapSize = patternBitmap.Size;
+            ReduceColorsAlongCreatingOctree = reduceColorsAlongCreatingBitmap;
         }
 
-        public Bitmap CalculateReducedColorsBitmap(int colorsLimit, Size bitmapSize)
+        public Bitmap GetBitmap(int colorsLimit, Size bitmapSize)
         {
-            Bitmap bitmap = new Bitmap(OrginalBitmap, bitmapSize);
-            if(bitmapSize == BitmapSize && octree != null && octree.ColorsCount >= colorsLimit && !ReduceColorsAlongCreatingOctree)
+            Bitmap bitmap = new Bitmap(patternBitmap, bitmapSize);
+            
+            if( octree != null &&
+                bitmapSize == lastCalculatedBitmapSize && 
+                octree.ColorsCount >= colorsLimit && 
+                !ReduceColorsAlongCreatingOctree)
             {
                 octree.ReduceColorsCount(colorsLimit);
-                return ReducedColors(bitmap);
+                return GetReducedBitmap(bitmap);
             }
-            BitmapSize = bitmapSize;
+            lastCalculatedBitmapSize = bitmapSize;
             NewOctree(bitmap, colorsLimit);
             octree.ReduceColorsCount(colorsLimit);
-            return ReducedColors(bitmap);
+            return GetReducedBitmap(bitmap);
         }
 
         private void NewOctree(Bitmap bitmap, int colorsLimit)
@@ -52,7 +56,7 @@ namespace Colors_reduction
             }
         }
 
-        private Bitmap ReducedColors(Bitmap bitmap)
+        private Bitmap GetReducedBitmap(Bitmap bitmap)
         {
             for (int i = 0; i < bitmap.Width; i++)
             {

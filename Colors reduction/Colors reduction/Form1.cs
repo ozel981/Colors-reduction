@@ -17,8 +17,10 @@ namespace Colors_reduction
     public partial class Form1 : Form
     {
         private string imagePath;
-        private ReducedColorsPicture PictureReduceAfterCreatingOctree;
-        private ReducedColorsPicture PictureReduceAlongCreatingOctree;
+        private int colorsLimit = 1;
+
+        private ReducedColorsBitmapFactory reducedAfterFactory;
+        private ReducedColorsBitmapFactory reducedAlongFactory;
         public Form1()
         {
             InitializeComponent();
@@ -28,49 +30,125 @@ namespace Colors_reduction
             pictureBox.Image = new Bitmap(new Bitmap(imagePath), pictureBox.Width, pictureBox.Height);
             pictureBoxAfter.Image = new Bitmap(pictureBoxAfter.Width, pictureBoxAfter.Height);
             pictureBoxAlong.Image = new Bitmap(pictureBoxAlong.Width, pictureBoxAlong.Height);
-            PictureReduceAfterCreatingOctree = new ReducedColorsPicture(new Bitmap(imagePath));
-            PictureReduceAlongCreatingOctree = new ReducedColorsPicture(new Bitmap(imagePath),true);
+            reducedAfterFactory = new ReducedColorsBitmapFactory(new Bitmap(imagePath));
+            reducedAlongFactory = new ReducedColorsBitmapFactory(new Bitmap(imagePath),true);
         }
 
-        private void DrawPictureWithReducedColorsAfterCreatigOctree()
+        private void DrawReducedAfterBitmap(int colorsLimit, Size pictureBoxSize)
         {
             using (Graphics graphics = Graphics.FromImage(pictureBoxAfter.Image))
             {
-                graphics.DrawImage(PictureReduceAfterCreatingOctree.CalculateReducedColorsBitmap(ColorsLimit.Value, pictureBoxAfter.Size),new Point(0,0));
+                graphics.DrawImage(reducedAfterFactory.GetBitmap(colorsLimit, pictureBoxSize), new Point(0, 0));
             }
-            pictureBoxAfter.Refresh();
-            AfterStatus.Text = "Ready";
         }
 
-        private void DrawPictureWithReducedColorsAlongCreatigOctree()
-        { 
+        private void DrawReducedAlongBitmap(int colorsLimit, Size pictureBoxSize)
+        {
             using (Graphics graphics = Graphics.FromImage(pictureBoxAlong.Image))
             {
-                graphics.DrawImage(PictureReduceAlongCreatingOctree.CalculateReducedColorsBitmap(ColorsLimit.Value, pictureBoxAlong.Size), new Point(0, 0));
+                graphics.DrawImage(reducedAlongFactory.GetBitmap(colorsLimit, pictureBoxSize), new Point(0, 0));
             }
-            pictureBoxAlong.Refresh();
-            AlongStatus.Text = "Ready";
         }
 
         private void ColorsLimit_Scroll(object sender, EventArgs e)
         {
-            ReduceColorsButton.Text = $"Reduce to {((TrackBar)sender).Value} colors";
+            colorsLimit = ((TrackBar)sender).Value;
+            if(colorsLimit == 1) ReduceColorsButton.Text = $"Reduce to {colorsLimit} color";
+            else ReduceColorsButton.Text = $"Reduce to {colorsLimit} colors";
         }
 
-        private void ReduceColorsButton_Click(object sender, EventArgs e)
+        private void RefreshPictures()
         {
             AfterStatus.Text = "Calculating...";
             AlongStatus.Text = "Calculating...";
             this.Refresh();
-            /*Task afterReduce = new Task(DrawPictureWithReducedColorsAfterCreatigOctree);
-            Task alongReduce = new Task(DrawPictureWithReducedColorsAlongCreatigOctree);
-            afterReduce.Start();
-            alongReduce.Start();*/
-            DrawPictureWithReducedColorsAlongCreatigOctree();
-            this.Refresh();
-            DrawPictureWithReducedColorsAfterCreatigOctree();
-            this.Refresh();
+            Size pictureBoxAlongSize = pictureBoxAlong.Size;
+            Size pictureBoxAfterSize = pictureBoxAfter.Size;
+            Task alongTask = new Task(() => DrawReducedAlongBitmap(colorsLimit, pictureBoxAlongSize));
 
+            Task afterTask = new Task(() => DrawReducedAfterBitmap(colorsLimit, pictureBoxAfterSize));
+
+            alongTask.Start();
+            afterTask.Start();
+
+            Task.WaitAny(alongTask, afterTask);
+
+            if (alongTask.IsCompleted)
+            {
+                AlongStatus.Text = "Ready";
+                pictureBoxAlong.Refresh();
+            }
+            if (afterTask.IsCompleted)
+            {
+                AfterStatus.Text = "Ready";
+                pictureBoxAfter.Refresh();
+            }
+
+            Task.WaitAll(alongTask, afterTask);
+
+            if (alongTask.IsCompleted)
+            {
+                AlongStatus.Text = "Ready";
+                pictureBoxAlong.Refresh();
+            }
+            if (afterTask.IsCompleted)
+            {
+                AfterStatus.Text = "Ready";
+                pictureBoxAfter.Refresh();
+            }
+        }
+
+        private void ReduceColorsButton_Click(object sender, EventArgs e)
+        {
+            RefreshPictures();
+        }
+
+        private void Form1_ResizeEnd(object sender, EventArgs e)
+        {
+            RefreshPictureBoxes();
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            ColorsLimit.Maximum = (int)((NumericUpDown)sender).Value;
+        }
+
+        private void RefreshPictureBoxes()
+        {
+            pictureBoxAfter.Image = new Bitmap(pictureBoxAfter.Width, pictureBoxAfter.Height);
+            pictureBoxAlong.Image = new Bitmap(pictureBoxAlong.Width, pictureBoxAlong.Height);
+            pictureBox.Image = new Bitmap(new Bitmap(imagePath), pictureBox.Width, pictureBox.Height);
+            RefreshPictures();
+        }
+
+        private void Form1_SizeChanged(object sender, EventArgs e)
+        {
+
+            RefreshPictureBoxes();
+        }
+
+
+        private void LoadBitmapButton_Click(object sender, EventArgs e)
+        {
+            var fileContent = string.Empty;
+            var filePath = string.Empty;
+
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                string path = Application.StartupPath;
+                openFileDialog.InitialDirectory = Path.Combine(path.Substring(0, path.Length - 9), @"Images");
+                openFileDialog.Filter = "png files (*.png)|*.png|jpg files (*.jpg)|*.jpg";
+                openFileDialog.FilterIndex = 2;
+                openFileDialog.RestoreDirectory = true;
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    imagePath = openFileDialog.FileName;
+                    reducedAfterFactory = new ReducedColorsBitmapFactory(new Bitmap(imagePath));
+                    reducedAlongFactory = new ReducedColorsBitmapFactory(new Bitmap(imagePath), true);
+                    RefreshPictureBoxes();
+                }
+            }
         }
     }
 }
