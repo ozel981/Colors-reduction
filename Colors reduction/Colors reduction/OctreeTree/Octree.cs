@@ -21,7 +21,7 @@ namespace Colors_reduction.OctreeTree
 
         public void AddColor(Color color)
         {
-            ColorsCount += root.AddColor(color, 0).newColorsCount;
+            ColorsCount += root.AddColor(color, 0);
         }
 
         public Color GetColor(Color color)

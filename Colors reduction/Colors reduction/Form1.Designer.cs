@@ -47,10 +47,13 @@
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
             this.ReduceColorsButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel11 = new System.Windows.Forms.TableLayoutPanel();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.tableLayoutPanel10 = new System.Windows.Forms.TableLayoutPanel();
             this.LoadBitmapButton = new System.Windows.Forms.Button();
-            this.tableLayoutPanel11 = new System.Windows.Forms.TableLayoutPanel();
+            this.SaveAlong = new System.Windows.Forms.Button();
+            this.SaveAfter = new System.Windows.Forms.Button();
+            this.ReduceToGrayScaleButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
@@ -66,9 +69,9 @@
             this.tableLayoutPanel8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ColorsLimit)).BeginInit();
             this.tableLayoutPanel9.SuspendLayout();
+            this.tableLayoutPanel11.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.tableLayoutPanel10.SuspendLayout();
-            this.tableLayoutPanel11.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -314,6 +317,21 @@
             this.label1.Text = "MAX:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // tableLayoutPanel11
+            // 
+            this.tableLayoutPanel11.ColumnCount = 1;
+            this.tableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel11.Controls.Add(this.numericUpDown1, 0, 1);
+            this.tableLayoutPanel11.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel11.Location = new System.Drawing.Point(174, 3);
+            this.tableLayoutPanel11.Name = "tableLayoutPanel11";
+            this.tableLayoutPanel11.RowCount = 3;
+            this.tableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel11.Size = new System.Drawing.Size(51, 26);
+            this.tableLayoutPanel11.TabIndex = 6;
+            // 
             // numericUpDown1
             // 
             this.numericUpDown1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -346,6 +364,9 @@
             this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel10.Controls.Add(this.LoadBitmapButton, 1, 0);
+            this.tableLayoutPanel10.Controls.Add(this.SaveAlong, 0, 1);
+            this.tableLayoutPanel10.Controls.Add(this.SaveAfter, 1, 1);
+            this.tableLayoutPanel10.Controls.Add(this.ReduceToGrayScaleButton, 0, 0);
             this.tableLayoutPanel10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel10.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel10.Name = "tableLayoutPanel10";
@@ -354,6 +375,7 @@
             this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.tableLayoutPanel10.Size = new System.Drawing.Size(234, 76);
             this.tableLayoutPanel10.TabIndex = 6;
+            this.tableLayoutPanel10.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel10_Paint);
             // 
             // LoadBitmapButton
             // 
@@ -366,20 +388,38 @@
             this.LoadBitmapButton.UseVisualStyleBackColor = true;
             this.LoadBitmapButton.Click += new System.EventHandler(this.LoadBitmapButton_Click);
             // 
-            // tableLayoutPanel11
+            // SaveAlong
             // 
-            this.tableLayoutPanel11.ColumnCount = 1;
-            this.tableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel11.Controls.Add(this.numericUpDown1, 0, 1);
-            this.tableLayoutPanel11.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel11.Location = new System.Drawing.Point(174, 3);
-            this.tableLayoutPanel11.Name = "tableLayoutPanel11";
-            this.tableLayoutPanel11.RowCount = 3;
-            this.tableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel11.Size = new System.Drawing.Size(51, 26);
-            this.tableLayoutPanel11.TabIndex = 6;
+            this.SaveAlong.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SaveAlong.Location = new System.Drawing.Point(3, 33);
+            this.SaveAlong.Name = "SaveAlong";
+            this.SaveAlong.Size = new System.Drawing.Size(111, 40);
+            this.SaveAlong.TabIndex = 8;
+            this.SaveAlong.Text = "Save reduced along";
+            this.SaveAlong.UseVisualStyleBackColor = true;
+            this.SaveAlong.Click += new System.EventHandler(this.SaveAlong_Click);
+            // 
+            // SaveAfter
+            // 
+            this.SaveAfter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SaveAfter.Location = new System.Drawing.Point(120, 33);
+            this.SaveAfter.Name = "SaveAfter";
+            this.SaveAfter.Size = new System.Drawing.Size(111, 40);
+            this.SaveAfter.TabIndex = 7;
+            this.SaveAfter.Text = "Save reduced after";
+            this.SaveAfter.UseVisualStyleBackColor = true;
+            this.SaveAfter.Click += new System.EventHandler(this.SaveAfter_Click);
+            // 
+            // ReduceToGrayScaleButton
+            // 
+            this.ReduceToGrayScaleButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ReduceToGrayScaleButton.Location = new System.Drawing.Point(3, 3);
+            this.ReduceToGrayScaleButton.Name = "ReduceToGrayScaleButton";
+            this.ReduceToGrayScaleButton.Size = new System.Drawing.Size(111, 24);
+            this.ReduceToGrayScaleButton.TabIndex = 9;
+            this.ReduceToGrayScaleButton.Text = "Reduce To Gray Scale";
+            this.ReduceToGrayScaleButton.UseVisualStyleBackColor = true;
+            this.ReduceToGrayScaleButton.Click += new System.EventHandler(this.ReduceToGrayScaleButton_Click);
             // 
             // Form1
             // 
@@ -410,9 +450,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.ColorsLimit)).EndInit();
             this.tableLayoutPanel9.ResumeLayout(false);
             this.tableLayoutPanel9.PerformLayout();
+            this.tableLayoutPanel11.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.tableLayoutPanel10.ResumeLayout(false);
-            this.tableLayoutPanel11.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -442,6 +482,9 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel10;
         private System.Windows.Forms.Button LoadBitmapButton;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel11;
+        private System.Windows.Forms.Button SaveAlong;
+        private System.Windows.Forms.Button SaveAfter;
+        private System.Windows.Forms.Button ReduceToGrayScaleButton;
     }
 }
 

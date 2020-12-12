@@ -12,7 +12,7 @@ namespace Colors_reduction.OctreeTree
         IOctreeNode BestColorFamilyToReduce { get; }
         int Index { get; }
 
-        (int newColorsCount, IOctreeNode bestColorFamilyToReduce) AddColor(Color color, int index);
+        int AddColor(Color color, int index);
         void ReduceColorsCount(IOctreeNode nodeToReduce, Color avgFamilyColor);
         Color GetColor(Color color);
         int GetColorPixelsCount();
@@ -33,15 +33,14 @@ namespace Colors_reduction.OctreeTree
             nodes = new Dictionary<int, IOctreeNode>();
         }
 
-        public (int newColorsCount, IOctreeNode bestColorFamilyToReduce) AddColor(Color color, int index)
+        public int AddColor(Color color, int index)
         {
             int nodeKey = GetNodeKeyForColor(color);
             int colorsCount = 1;
             if (nodes.ContainsKey(nodeKey))
             {
-                (int colorsCount, IOctreeNode newFamily) result = nodes[nodeKey].AddColor(color, index + 1);
-                SetBestColorFamilyToReduce(result.newFamily);
-                colorsCount = result.colorsCount;
+                colorsCount = nodes[nodeKey].AddColor(color, index + 1);
+                SetBestColorFamilyToReduce(nodes[nodeKey].BestColorFamilyToReduce);
             }
             else
             {
@@ -54,11 +53,11 @@ namespace Colors_reduction.OctreeTree
                 {
                     IOctreeNode nextNode = new OctreeNode(index + 1);
                     nodes.Add(nodeKey, nextNode);
-                    (int colorsCount, IOctreeNode newFamily) result = nextNode.AddColor(color, index + 1);
-                    SetBestColorFamilyToReduce(result.newFamily);
+                    colorsCount = nextNode.AddColor(color, index + 1);
+                    SetBestColorFamilyToReduce(nextNode.BestColorFamilyToReduce);
                 }
             }
-            return (colorsCount, BestColorFamilyToReduce);
+            return colorsCount;
         }
         public Color GetColor(Color color)
         {
@@ -199,10 +198,10 @@ namespace Colors_reduction.OctreeTree
             return pixelsCount;
         }
 
-        (int newColorsCount, IOctreeNode bestColorFamilyToReduce) IOctreeNode.AddColor(Color color, int index)
+        public int AddColor(Color color, int index)
         {
             pixelsCount++;
-            return (0,null);
+            return 0;
         }
 
         public void ReduceColorsCount(IOctreeNode nodeToReduce, Color avgFamilyColor)
